@@ -260,7 +260,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
           </ul>
           <div className="header-actions">
             <button className="cart-trigger" onClick={() => setIsCartOpen(true)}>
-              <span>🛒</span> Keranjang
+              <span>🛒</span> <span className="cart-trigger-text">Keranjang</span>
               {cart.length > 0 && <span className="cart-badge">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>}
             </button>
           </div>
@@ -458,7 +458,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
             <p>
               Dengan memadukan teknik pemanggangan modern dan seduhan presisi dari barista kami, setiap gelas Kopiku dirancang untuk menghadirkan rasa otentik yang membuat Anda ingin kembali lagi.
             </p>
-            <div style={{ display: 'flex', gap: '24px', marginTop: '12px' }}>
+            <div className="about-stats" style={{ display: 'flex', gap: '24px', marginTop: '12px' }}>
               <div>
                 <h3 style={{ fontSize: '32px', color: 'var(--secondary)' }}>100%</h3>
                 <p style={{ fontSize: '14px', fontWeight: 600 }}>Arabika Lokal</p>
@@ -495,6 +495,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                 <li><a href="#">Beranda</a></li>
                 <li><a href="#menu-pilihan">Menu Kopi</a></li>
                 <li><a href="#tentang">Tentang Kami</a></li>
+                <li><Link href="/admin">Admin Portal</Link></li>
               </ul>
             </div>
             <div className="footer-links">

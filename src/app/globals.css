@@ -1681,3 +1681,295 @@ button {
 .chart-dot-group:hover .chart-tooltip {
   opacity: 1 !important;
 }
+
+/* -------------------------------------------------------------
+   RESPONSIVE DESIGN (MOBILE & TABLET)
+------------------------------------------------------------- */
+@media (max-width: 767px) {
+  /* Layout container padding */
+  .container {
+    padding: 0 16px;
+  }
+
+  /* Header / Navbar */
+  .header-container {
+    height: 70px;
+  }
+  .nav-links {
+    display: none !important; /* Hide desktop nav links */
+  }
+  .logo {
+    font-size: 20px;
+  }
+  .logo-icon {
+    font-size: 24px;
+  }
+  .cart-trigger {
+    padding: 8px 12px;
+    border-radius: var(--radius-sm);
+  }
+  .cart-trigger-text {
+    display: none !important; /* Hide "Keranjang" text on mobile */
+  }
+
+  /* Hero Section */
+  .hero {
+    padding: 40px 0 60px;
+    background: radial-gradient(circle at 50% 10%, var(--accent) 0%, rgba(252, 250, 247, 0) 80%);
+  }
+  .hero-grid {
+    grid-template-columns: 1fr;
+    gap: 32px;
+    text-align: center;
+  }
+  .hero-content {
+    max-width: 100%;
+  }
+  .hero-title {
+    font-size: 36px;
+  }
+  .hero-title span {
+    font-size: 38px;
+    display: inline;
+  }
+  .hero-desc {
+    font-size: 15px;
+    margin-bottom: 24px;
+  }
+  .hero-actions {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .hero-actions .btn {
+    width: 100%;
+  }
+  .hero-image-circle {
+    width: 260px;
+    height: 260px;
+  }
+  .hero-image-placeholder {
+    font-size: 100px;
+  }
+  .floating-card {
+    display: none !important; /* Remove floating cards to reduce clutter on mobile */
+  }
+
+  /* Menu Section & Filters */
+  .menu-section {
+    padding: 50px 0;
+  }
+  .section-title {
+    font-size: 28px;
+  }
+  .search-filter-bar {
+    padding: 16px;
+    gap: 16px;
+    border-radius: var(--radius-md);
+  }
+  .search-box {
+    max-width: 100%;
+  }
+  .category-pills {
+    padding-bottom: 8px;
+  }
+  .category-btn {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  /* Menu Grid and Cards */
+  .menu-grid {
+    gap: 20px;
+  }
+  .menu-card {
+    border-radius: var(--radius-md);
+  }
+  .menu-image-container {
+    height: 185px;
+  }
+  .menu-content {
+    padding: 16px;
+  }
+  .menu-desc {
+    margin-bottom: 12px;
+    height: auto;
+    -webkit-line-clamp: 3;
+  }
+
+  /* Customization Modal */
+  .modal-overlay {
+    padding: 12px;
+  }
+  .modal-container {
+    border-radius: var(--radius-md);
+  }
+  .modal-hero {
+    height: 180px;
+  }
+  .modal-hero-placeholder {
+    font-size: 72px;
+  }
+  .modal-content {
+    padding: 20px;
+  }
+  .modal-title {
+    font-size: 22px;
+  }
+  .option-grid {
+    gap: 8px;
+  }
+  .option-card {
+    padding: 8px 4px;
+    font-size: 12px;
+    border-radius: var(--radius-sm);
+  }
+  .option-card span {
+    font-size: 10px;
+  }
+  .modal-footer {
+    flex-direction: column;
+    gap: 16px;
+    align-items: stretch;
+    margin-top: 24px;
+    padding-top: 16px;
+    text-align: center;
+  }
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  /* About Section Stats */
+  .about-stats {
+    flex-wrap: wrap !important;
+    gap: 16px !important;
+    justify-content: center;
+  }
+  .about-stats > div {
+    flex: 1 1 30%;
+    min-width: 80px;
+    text-align: center;
+  }
+  .about-stats h3 {
+    font-size: 28px !important;
+  }
+
+  /* Footer */
+  .footer {
+    padding: 50px 0 24px;
+    text-align: center;
+  }
+  .footer-grid {
+    gap: 32px;
+    margin-bottom: 40px;
+  }
+  .footer-about {
+    align-items: center;
+  }
+  .footer-about p {
+    margin: 0 auto 20px;
+  }
+  .social-links {
+    justify-content: center;
+  }
+  .footer-links ul {
+    align-items: center;
+  }
+  .footer-bottom {
+    text-align: center;
+    padding-top: 24px;
+  }
+
+  /* -------------------------------------------------------------
+     ADMIN PORTAL RESPONSIVE STYLES
+  ------------------------------------------------------------- */
+  .admin-layout {
+    flex-direction: column;
+  }
+  .admin-sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.05);
+  }
+  .admin-logo {
+    margin-bottom: 0;
+    padding: 0;
+    font-size: 18px;
+  }
+  .admin-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 4px;
+    width: auto;
+  }
+  .admin-nav-item a {
+    padding: 8px 12px;
+    font-size: 13px;
+    border-left: none;
+    border-bottom: 3px solid transparent;
+    border-radius: 4px;
+  }
+  .admin-nav-item.active a {
+    border-left-color: transparent;
+    border-bottom-color: var(--secondary);
+    background-color: rgba(255, 255, 255, 0.08);
+  }
+  .admin-logout {
+    margin-top: 0;
+    padding: 0;
+    width: auto;
+  }
+  .admin-logout-btn {
+    padding: 8px 12px;
+    font-size: 13px;
+  }
+  .admin-main {
+    margin-left: 0;
+    padding: 16px;
+  }
+  .admin-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .admin-header .btn {
+    width: 100%;
+  }
+  .admin-stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .stat-card {
+    padding: 16px;
+  }
+  
+  /* Stack grid layouts in Admin Reports */
+  .admin-main > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+    gap: 20px !important;
+  }
+  
+  /* Tables on mobile */
+  .admin-card-header {
+    padding: 16px;
+  }
+  .admin-table th, 
+  .admin-table td {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+  .admin-table-item-img {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+}
