@@ -3,10 +3,10 @@
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
 
-export default function MenuClient({ initialCategories, initialMenuItems }) {
+export default function MenuClient({ initialCategories, initialMenuItems, dbError }) {
   // States
-  const [categories] = useState(initialCategories);
-  const [menuItems, setMenuItems] = useState(initialMenuItems);
+  const [categories] = useState(initialCategories || []);
+  const [menuItems, setMenuItems] = useState(initialMenuItems || []);
   const [activeCategory, setActiveCategory] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   
@@ -315,6 +315,54 @@ export default function MenuClient({ initialCategories, initialMenuItems }) {
               Pilih dari berbagai kategori minuman espresso, susu, non-kopi, hingga kue pendamping yang dibuat segar setiap hari.
             </p>
           </div>
+
+          {dbError && (
+            <div className="db-error-alert" style={{
+              background: 'rgba(211, 47, 47, 0.05)',
+              border: '1px solid var(--danger)',
+              borderRadius: 'var(--radius-md)',
+              padding: '24px',
+              margin: '32px auto 0 auto',
+              maxWidth: '800px',
+              textAlign: 'center',
+              boxShadow: 'var(--shadow-sm)',
+              backdropFilter: 'blur(8px)',
+              animation: 'fadeIn 0.5s ease-out'
+            }}>
+              <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>⚠️</span>
+              <h3 style={{ color: 'var(--danger)', fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>
+                Koneksi Database Gagal / Terputus
+              </h3>
+              <p style={{ color: 'var(--text-main)', fontSize: '14px', marginBottom: '16px', lineHeight: '1.6' }}>
+                Aplikasi Kopiku tidak dapat memuat daftar menu saat ini karena masalah koneksi ke database MySQL.
+              </p>
+              <div style={{
+                background: 'rgba(45, 31, 24, 0.03)',
+                border: '1px solid var(--border-color)',
+                borderRadius: 'var(--radius-sm)',
+                padding: '12px 16px',
+                fontSize: '13px',
+                fontFamily: 'monospace',
+                color: 'var(--text-muted)',
+                wordBreak: 'break-all',
+                textAlign: 'left',
+                maxHeight: '120px',
+                overflowY: 'auto',
+                marginBottom: '16px'
+              }}>
+                <strong>Log Kesalahan:</strong> {dbError}
+              </div>
+              <div style={{
+                fontSize: '13px',
+                color: 'var(--text-muted)',
+                lineHeight: '1.5',
+                paddingTop: '12px',
+                borderTop: '1px dashed var(--border-color)'
+              }}>
+                💡 <strong>Solusi:</strong> Pastikan Anda telah mengaktifkan <strong>Remote MySQL</strong> dengan akses host <code>%</code> di cPanel hosting Anda, dan parameter <code>DATABASE_URL</code> di Vercel / berkas <code>.env</code> sudah benar.
+              </div>
+            </div>
+          )}
 
           {/* Search & Category Filter Bar */}
           <div className="search-filter-bar">

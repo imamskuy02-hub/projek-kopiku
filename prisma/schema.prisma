@@ -41,11 +41,11 @@ model Order {
   id            Int      @id @default(autoincrement())
   customerName  String
   tableNumber   String
-  notes         String?
+  notes         String?  @db.Text
   paymentMethod String   // "CASH", "TRANSFER", "QRIS"
   totalAmount   Int
   status        String   // "PENDING", "PAID", "COMPLETED", "CANCELLED"
-  items         String   // Stringified JSON array of items
+  items         String   @db.Text // Stringified JSON array of items
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }
