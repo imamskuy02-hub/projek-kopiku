@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import Link from 'next/link';
 
 export default function MenuClient({ initialCategories, initialMenuItems, dbError }) {
@@ -32,6 +32,15 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
 
   // Toast
   const [toastMessage, setToastMessage] = useState('');
+  
+  // App/Admin visibility check
+  const [isAdminVisible, setIsAdminVisible] = useState(false);
+
+  useEffect(() => {
+    if (typeof navigator !== 'undefined' && navigator.userAgent.includes('KopikuAdminApp')) {
+      setIsAdminVisible(true);
+    }
+  }, []);
 
   // Show Toast
   const triggerToast = (msg) => {
@@ -257,7 +266,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
           <ul className="nav-links">
             <li><a href="#" className="nav-link active">Menu</a></li>
             <li><a href="#tentang" className="nav-link">Tentang Kami</a></li>
-            <li><Link href="/admin" className="nav-link">Admin Portal</Link></li>
+            {isAdminVisible && <li><Link href="/admin" className="nav-link">Admin Portal</Link></li>}
           </ul>
           <div className="header-actions">
             <button className="cart-trigger" onClick={() => setIsCartOpen(true)}>
@@ -496,7 +505,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                 <li><a href="#">Beranda</a></li>
                 <li><a href="#menu-pilihan">Menu Kopi</a></li>
                 <li><a href="#tentang">Tentang Kami</a></li>
-                <li><Link href="/admin">Admin Portal</Link></li>
+                {isAdminVisible && <li><Link href="/admin">Admin Portal</Link></li>}
               </ul>
             </div>
             <div className="footer-links">
