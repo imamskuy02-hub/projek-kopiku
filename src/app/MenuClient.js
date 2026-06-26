@@ -37,8 +37,12 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
   const [isAdminVisible, setIsAdminVisible] = useState(false);
 
   useEffect(() => {
-    if (typeof navigator !== 'undefined' && navigator.userAgent.includes('KopikuAdminApp')) {
-      setIsAdminVisible(true);
+    if (typeof window !== 'undefined') {
+      const isApp = document.cookie.includes('is_admin_app=true') || 
+                    window.location.search.includes('app=true');
+      if (isApp) {
+        setIsAdminVisible(true);
+      }
     }
   }, []);
 
