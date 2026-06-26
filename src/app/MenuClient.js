@@ -242,6 +242,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       submitOrder('PENDING');
     } else {
       setIsPaying(true);
+      setIsCartOpen(false); // Close cart drawer so it doesn't obscure the payment modal on mobile
     }
   };
 
@@ -799,7 +800,10 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       {isPaying && (
         <div className="modal-overlay active">
           <div className="modal-container" style={{ maxWidth: '450px' }}>
-            <button className="close-modal" onClick={() => setIsPaying(false)}>✕</button>
+            <button className="close-modal" onClick={() => {
+              setIsPaying(false);
+              setIsCartOpen(true); // Re-open cart drawer when closing payment modal
+            }}>✕</button>
             <div className="modal-content" style={{ padding: '32px' }}>
               <h3 style={{ color: 'var(--primary-dark)', marginBottom: '16px', textAlign: 'center' }}>
                 {paymentMethod === 'QRIS' ? '📱 Pembayaran QRIS' : '🏦 Transfer Bank'}
@@ -872,7 +876,10 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                 <button 
                   type="button" 
                   className="btn btn-secondary btn-full"
-                  onClick={() => setIsPaying(false)}
+                  onClick={() => {
+                    setIsPaying(false);
+                    setIsCartOpen(true); // Re-open cart drawer when cancelling payment
+                  }}
                 >
                   Batal
                 </button>
