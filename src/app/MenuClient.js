@@ -156,7 +156,8 @@ export default function MenuClient({ initialCategories, initialMenuItems }) {
       });
 
       if (!response.ok) {
-        throw new Error('Gagal menyimpan pesanan');
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || 'Gagal menyimpan pesanan');
       }
 
       const createdOrder = await response.json();
@@ -216,7 +217,7 @@ export default function MenuClient({ initialCategories, initialMenuItems }) {
       triggerToast('Pesanan berhasil dibuat!');
     } catch (err) {
       console.error(err);
-      triggerToast('Error: Gagal memproses pesanan ke server. Coba lagi.');
+      triggerToast(`Error: ${err.message}`);
     }
   };
 

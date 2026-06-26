@@ -51,6 +51,6 @@ export async function POST(request) {
     return NextResponse.json(newOrder, { status: 201 });
   } catch (error) {
     console.error("POST Order Error:", error);
-    return NextResponse.json({ error: "Gagal memproses pesanan baru" }, { status: 500 });
+    return NextResponse.json({ error: error.message || "Gagal memproses pesanan baru" }, { status: 500 });
   }
 }
