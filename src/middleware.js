@@ -8,14 +8,16 @@ export function middleware(request) {
   if (path.startsWith("/admin") || path.startsWith("/login")) {
     const hasCookie = request.cookies.has("is_admin_app");
     const hasParam = url.searchParams.get("app") === "true";
+    const userAgent = request.headers.get("user-agent") || "";
+    const isAppUA = userAgent.includes("KopikuAdminApp");
 
-    // If neither the cookie nor the URL parameter is present, return 404
-    if (!hasCookie && !hasParam) {
+    // If neither the cookie, URL parameter, nor custom app User-Agent is present, return 404
+    if (!hasCookie && !hasParam && !isAppUA) {
       return new NextResponse(null, { status: 404 });
     }
 
-    // If the URL has ?app=true, set the cookie so they stay authenticated as the app
-    if (hasParam && !hasCookie) {
+    // If the URL has ?app=true or the request is from the custom APK, set the cookie so they stay authenticated
+    if ((hasParam || isAppUA) && !hasCookie) {
       const response = NextResponse.next();
       response.cookies.set("is_admin_app", "true", {
         path: "/",
