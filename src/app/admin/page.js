@@ -591,7 +591,7 @@ export default function AdminDashboard() {
                           </span>
                           <span style={{ fontWeight: 600 }}>{item.name}</span>
                         </div>
-                        <span style={{ backgroundColor: 'rgba(78, 54, 41, 0.08)', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>
+                        <span style={{ backgroundColor: 'rgba(201, 54, 54, 0.08)', padding: '2px 8px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>
                           {item.qty} Porsi
                         </span>
                       </div>
@@ -728,7 +728,7 @@ export default function AdminDashboard() {
             {/* Orders Stats Cards */}
             <section className="admin-stats-grid">
               <div className="stat-card">
-                <div className="stat-icon total-items" style={{ backgroundColor: 'rgba(78, 54, 41, 0.1)' }}>🛒</div>
+                <div className="stat-icon total-items" style={{ backgroundColor: 'rgba(201, 54, 54, 0.1)' }}>🛒</div>
                 <div className="stat-details">
                   <span>Total Pesanan</span>
                   <h3>{orders.length} Order</h3>

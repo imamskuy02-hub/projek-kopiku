@@ -346,13 +346,13 @@ button {
 .btn-primary {
   background-color: var(--primary);
   color: var(--white);
-  box-shadow: 0 8px 20px rgba(78, 54, 41, 0.25);
+  box-shadow: 0 8px 20px rgba(201, 54, 54, 0.25);
 }
 
 .btn-primary:hover {
   background-color: var(--primary-dark);
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px rgba(78, 54, 41, 0.35);
+  box-shadow: 0 12px 24px rgba(201, 54, 54, 0.35);
 }
 
 .btn-secondary {
@@ -515,7 +515,7 @@ button {
 .search-input:focus {
   border-color: var(--primary);
   background-color: var(--white);
-  box-shadow: 0 0 0 4px rgba(78, 54, 41, 0.1);
+  box-shadow: 0 0 0 4px rgba(201, 54, 54, 0.1);
 }
 
 .search-icon {
@@ -558,14 +558,14 @@ button {
 .category-btn:hover {
   border-color: var(--primary-light);
   color: var(--primary);
-  background-color: rgba(78, 54, 41, 0.02);
+  background-color: rgba(201, 54, 54, 0.02);
 }
 
 .category-btn.active {
   background-color: var(--primary);
   border-color: var(--primary);
   color: var(--white);
-  box-shadow: 0 4px 12px rgba(78, 54, 41, 0.2);
+  box-shadow: 0 4px 12px rgba(201, 54, 54, 0.2);
 }
 
 /* Menu Grid and Cards */
@@ -879,7 +879,7 @@ button {
   background-color: var(--white);
   border-color: var(--primary);
   color: var(--primary-dark);
-  box-shadow: 0 4px 10px rgba(78, 54, 41, 0.08);
+  box-shadow: 0 4px 10px rgba(201, 54, 54, 0.08);
   outline: 2px solid var(--primary);
 }
 
@@ -1413,7 +1413,7 @@ button {
 }
 
 .stat-icon.total-items { background-color: rgba(212, 163, 115, 0.15); color: var(--primary); }
-.stat-icon.total-categories { background-color: rgba(78, 54, 41, 0.15); color: var(--primary-dark); }
+.stat-icon.total-categories { background-color: rgba(201, 54, 54, 0.15); color: var(--primary-dark); }
 .stat-icon.out-of-stock { background-color: rgba(211, 47, 47, 0.1); color: var(--danger); }
 
 .stat-details span {
@@ -1485,7 +1485,7 @@ button {
 }
 
 .admin-table tr:hover {
-  background-color: rgba(78, 54, 41, 0.01);
+  background-color: rgba(201, 54, 54, 0.01);
 }
 
 .admin-table-item-info {
@@ -1644,7 +1644,7 @@ button {
 .form-input:focus {
   border-color: var(--primary);
   background-color: var(--white);
-  box-shadow: 0 0 0 4px rgba(78, 54, 41, 0.08);
+  box-shadow: 0 0 0 4px rgba(201, 54, 54, 0.08);
 }
 
 .btn-full {
@@ -1948,7 +1948,7 @@ button {
     font-weight: 600;
   }
   .nav-link:hover {
-    background-color: rgba(78, 54, 41, 0.04);
+    background-color: rgba(201, 54, 54, 0.04);
   }
   .nav-link::after {
     display: none;

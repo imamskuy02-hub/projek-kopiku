@@ -502,7 +502,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       </section>
 
       {/* About Section */}
-      <section id="tentang" className="menu-section" style={{ backgroundColor: 'rgba(78, 54, 41, 0.02)' }}>
+      <section id="tentang" className="menu-section" style={{ backgroundColor: 'rgba(201, 54, 54, 0.02)' }}>
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '48px', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <span className="section-subtitle">Cerita Kami</span>
@@ -961,7 +961,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                   </div>
                 ) : (
                   /* TODO: Ganti informasi rekening bank di bawah dengan data asli bisnis Anda */
-                  <div style={{ width: '100%', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(78, 54, 41, 0.02)' }}>
+                  <div style={{ width: '100%', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(201, 54, 54, 0.02)' }}>
                     <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                       <button 
                         type="button"
