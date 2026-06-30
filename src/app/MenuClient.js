@@ -16,9 +16,9 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
   const [customizingItem, setCustomizingItem] = useState(null);
   
   // Customization Form States
-  const [selectedSize, setSelectedSize] = useState('Regular');
-  const [selectedSugar, setSelectedSugar] = useState('Normal');
-  const [selectedIce, setSelectedIce] = useState('Normal');
+  const [selectedSize, setSelectedSize] = useState('Reguler');
+  const [selectedSugar, setSelectedSugar] = useState('Sedang'); // Digunakan untuk Tingkat Pedas
+  const [selectedIce, setSelectedIce] = useState('Normal');     // Digunakan untuk Suhu
   const [selectedAddon, setSelectedAddon] = useState('None');
   const [quantity, setQuantity] = useState(1);
   
@@ -33,6 +33,12 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
   // Toast
   const [toastMessage, setToastMessage] = useState('');
   
+  // Mobile Menu
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  
+  // Dark Mode
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  
   // App/Admin visibility check
   const [isAdminVisible, setIsAdminVisible] = useState(false);
 
@@ -40,9 +46,16 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
     if (typeof window !== 'undefined') {
       const isApp = document.cookie.includes('is_admin_app=true') || 
                     window.location.search.includes('app=true') ||
-                    navigator.userAgent.includes('KopikuAdminApp');
+                    navigator.userAgent.includes('RestoRasaAdminApp');
       if (isApp) {
         setIsAdminVisible(true);
+      }
+      
+      // Load dark mode preference
+      const savedTheme = localStorage.getItem('restorasa-theme');
+      if (savedTheme === 'dark') {
+        setIsDarkMode(true);
+        document.documentElement.setAttribute('data-theme', 'dark');
       }
     }
   }, []);
@@ -53,6 +66,19 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
     setTimeout(() => {
       setToastMessage('');
     }, 3000);
+  };
+
+  // Toggle Dark Mode
+  const toggleDarkMode = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    if (newMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('restorasa-theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('restorasa-theme', 'light');
+    }
   };
 
   // Filtered menu items based on category and search query
@@ -69,8 +95,8 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
   const handleOpenCustomise = (item) => {
     if (!item.available) return;
     setCustomizingItem(item);
-    setSelectedSize('Regular');
-    setSelectedSugar('Normal');
+    setSelectedSize('Reguler');
+    setSelectedSugar('Sedang');
     setSelectedIce('Normal');
     setSelectedAddon('None');
     setQuantity(1);
@@ -79,9 +105,10 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
   // Calculate customized item price
   const calculateItemPrice = (item, size, addon) => {
     let price = item.price;
-    if (size === 'Large') price += 5000;
-    if (addon === 'Extra Shot') price += 5000;
-    if (addon === 'Caramel Syrup' || addon === 'Hazelnut Syrup') price += 4000;
+    if (size === 'Jumbo') price += 10000;
+    if (addon === 'Telur Mata Sapi') price += 5000;
+    if (addon === 'Nasi Putih') price += 6000;
+    if (addon === 'Kerupuk') price += 2000;
     return price;
   };
 
@@ -181,15 +208,15 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       if (paymentMethod === 'QRIS') paymentLabel = 'QRIS';
 
       // Format WhatsApp message text
-      let orderText = `*HALO KOPIKU! SAYA INGIN MEMESAN:*\n\n`;
+      let orderText = `*HALO RESTO RASA! SAYA INGIN MEMESAN:*\n\n`;
       orderText += `*Order ID:* #${createdOrder.id}\n`;
       orderText += `*Status:* ${finalStatus === 'PAID' ? 'Sudah Dibayar (Konfirmasi Lunas)' : 'Belum Dibayar (Bayar di Kasir)'}\n\n`;
       
       cart.forEach((item, index) => {
         const customs = [];
         if (item.size !== 'Regular') customs.push(`Ukuran: ${item.size}`);
-        if (item.sugar !== 'Normal') customs.push(`Gula: ${item.sugar}`);
-        if (item.ice !== 'Normal') customs.push(`Es: ${item.ice}`);
+        if (item.sugar !== 'Normal') customs.push(`Tingkat Pedas: ${item.sugar}`);
+        if (item.ice !== 'Normal') customs.push(`Suhu: ${item.ice}`);
         if (item.addon !== 'None') customs.push(`Tambahan: ${item.addon}`);
         
         const customString = customs.length > 0 ? ` (${customs.join(', ')})` : '';
@@ -205,6 +232,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       if (orderNotes) orderText += `- Catatan: ${orderNotes}\n`;
 
       const encodedText = encodeURIComponent(orderText);
+      // TODO: Ganti nomor WhatsApp di bawah dengan nomor bisnis asli Anda
       const whatsappUrl = `https://wa.me/628123456789?text=${encodedText}`;
 
       // Set simulated order details for receipt pop-up
@@ -266,32 +294,46 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       <header className="header">
         <div className="container header-container">
           <Link href="/" className="logo">
-            <span className="logo-icon">☕</span> Kopiku
+            <span className="logo-icon">🍽️</span> Resto Rasa
           </Link>
-          <ul className="nav-links">
-            <li><a href="#" className="nav-link active">Menu</a></li>
-            <li><a href="#tentang" className="nav-link">Tentang Kami</a></li>
-            {isAdminVisible && <li><Link href="/admin" className="nav-link">Admin Portal</Link></li>}
+          <ul className={`nav-links ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
+            <li><a href="#" className="nav-link active" onClick={() => setIsMobileMenuOpen(false)}>Menu</a></li>
+            <li><a href="#tentang" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Tentang Kami</a></li>
+            {isAdminVisible && <li><Link href="/admin" className="nav-link" onClick={() => setIsMobileMenuOpen(false)}>Admin Portal</Link></li>}
           </ul>
           <div className="header-actions">
+            <button className="theme-toggle" onClick={toggleDarkMode} aria-label="Toggle dark mode">
+              {isDarkMode ? '☀️' : '🌙'}
+            </button>
             <button className="cart-trigger" onClick={() => setIsCartOpen(true)}>
               <span>🛒</span> <span className="cart-trigger-text">Keranjang</span>
               {cart.length > 0 && <span className="cart-badge">{cart.reduce((sum, item) => sum + item.quantity, 0)}</span>}
             </button>
+            <button 
+              className={`hamburger-btn ${isMobileMenuOpen ? 'active' : ''}`} 
+              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+              aria-label="Toggle menu"
+            >
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+              <span className="hamburger-line"></span>
+            </button>
           </div>
         </div>
       </header>
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && <div className="mobile-menu-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
 
       {/* Hero Banner */}
       <section className="hero">
         <div className="container hero-grid">
           <div className="hero-content">
-            <div className="hero-badge">✨ Biji Kopi Arabika Pilihan</div>
+            <div className="hero-badge">✨ Resep Warisan Nusantara</div>
             <h1 className="hero-title">
-              Awali Harimu Dengan <span>Kopi Istimewa</span>
+              Sajian Istimewa dari <span>Dapur Kami</span>
             </h1>
             <p className="hero-desc">
-              Nikmati racikan kopi premium yang diseduh secara presisi oleh barista terbaik kami. Pesan langsung dari meja Anda dengan mudah dan cepat.
+              Nikmati hidangan otentik dengan bumbu pilihan yang dimasak penuh cinta. Pesan langsung dari meja Anda dengan mudah dan cepat.
             </p>
             <div className="hero-actions">
               <a href="#menu-pilihan" className="btn btn-primary">Lihat Menu Pilihan</a>
@@ -300,12 +342,12 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
           </div>
           <div className="hero-image-wrapper">
             <div className="hero-image-circle">
-              <span className="hero-image-placeholder">☕</span>
+              <span className="hero-image-placeholder">🍲</span>
             </div>
             <div className="floating-card floating-card-1">
               <div className="floating-icon">⭐</div>
               <div className="floating-text">
-                <h4>Signature Latte</h4>
+                <h4>Nasi Goreng Spesial</h4>
                 <p>Favorit Pelanggan</p>
               </div>
             </div>
@@ -323,11 +365,11 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
       {/* Interactive Menu Grid */}
       <section id="menu-pilihan" className="menu-section">
         <div className="container">
-          <div className="menu-header text-center">
-            <span className="section-subtitle">Daftar Menu</span>
-            <h2 className="section-title">Nikmati Sajian Kopiku</h2>
-            <p style={{ maxWidth: '600px', margin: '0 auto' }}>
-              Pilih dari berbagai kategori minuman espresso, susu, non-kopi, hingga kue pendamping yang dibuat segar setiap hari.
+          <div className="section-header" style={{ textAlign: 'left', marginBottom: '32px' }}>
+            <span className="section-subtitle">Menu Pilihan</span>
+            <h2 className="section-title">Nikmati Sajian Resto Rasa</h2>
+            <p className="section-desc" style={{ maxWidth: '600px', margin: '0' }}>
+              Pilih dari berbagai kategori makanan utama, lauk pauk, minuman, hingga camilan yang dibuat segar setiap hari.
             </p>
           </div>
 
@@ -344,12 +386,10 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
               backdropFilter: 'blur(8px)',
               animation: 'fadeIn 0.5s ease-out'
             }}>
-              <span style={{ fontSize: '40px', display: 'block', marginBottom: '12px' }}>⚠️</span>
-              <h3 style={{ color: 'var(--danger)', fontSize: '18px', fontWeight: '700', marginBottom: '8px' }}>
-                Koneksi Database Gagal / Terputus
-              </h3>
-              <p style={{ color: 'var(--text-main)', fontSize: '14px', marginBottom: '16px', lineHeight: '1.6' }}>
-                Aplikasi Kopiku tidak dapat memuat daftar menu saat ini karena masalah koneksi ke database MySQL.
+              <span style={{ fontSize: '48px', marginBottom: '16px', display: 'block' }}>⚠️</span>
+              <h3 style={{ color: 'var(--danger)', marginBottom: '8px' }}>Database Connection Error</h3>
+              <p>
+                Aplikasi Resto Rasa tidak dapat memuat daftar menu saat ini karena masalah koneksi ke database MySQL.
               </p>
               <div style={{
                 background: 'rgba(45, 31, 24, 0.03)',
@@ -386,7 +426,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
               <span className="search-icon">🔍</span>
               <input 
                 type="text" 
-                placeholder="Cari kopi atau makanan..." 
+                placeholder="Cari makanan atau minuman..." 
                 className="search-input"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -422,12 +462,12 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
               {filteredMenuItems.map((item) => (
                 <div key={item.id} className="menu-card">
                   <div className="menu-image-container">
-                    {item.image && !item.image.includes('placeholder') && !item.image.includes('espresso.jpg') ? (
+                    {item.image && !item.image.includes('placeholder') && !item.image.includes('nasi_goreng.png') ? (
                       <img src={item.image} alt={item.name} className="menu-image" />
                     ) : (
                       <span className="menu-image-placeholder">
-                        {item.categorySlug === 'espresso-base' || item.categorySlug === 'milk-base' ? '☕' : 
-                         item.categorySlug === 'non-coffee' ? '🍵' : '🥐'}
+                        {item.categorySlug === 'makanan-utama' || item.categorySlug === 'sayuran-lauk' ? '🍲' : 
+                         item.categorySlug === 'minuman' ? '🍹' : '🍘'}
                       </span>
                     )}
                     <span className="menu-badge">{item.categoryName}</span>
@@ -466,25 +506,25 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
         <div className="container" style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '48px', alignItems: 'center' }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             <span className="section-subtitle">Cerita Kami</span>
-            <h2 className="section-title" style={{ fontFamily: 'var(--font-display)' }}>Menghadirkan Kopi Terbaik Sejak 2026</h2>
+            <h2 className="section-title" style={{ fontFamily: 'var(--font-display)' }}>Menghadirkan Resep Warisan Sejak 2026</h2>
             <p>
-              Kopiku berawal dari mimpi sederhana: menyajikan secangkir kopi segar dengan cita rasa asli nusantara dalam atmosfer modern. Kami bekerja sama secara langsung dengan petani kopi lokal di Mandailing, Kintamani, dan Toraja untuk memastikan kualitas biji kopi terbaik yang diproses secara etis.
+              Resto Rasa Nusantara berawal dari mimpi sederhana: menyajikan hidangan otentik dengan resep warisan keluarga yang kaya akan rempah dalam atmosfer modern yang nyaman. Kami bekerja sama secara langsung dengan petani lokal untuk memastikan kualitas bahan pokok terbaik yang diproses secara etis.
             </p>
             <p>
-              Dengan memadukan teknik pemanggangan modern dan seduhan presisi dari barista kami, setiap gelas Kopiku dirancang untuk menghadirkan rasa otentik yang membuat Anda ingin kembali lagi.
+              Dengan memadukan teknik memasak tradisional dan bahan segar berkualitas tinggi, setiap porsi hidangan kami dirancang untuk membawa rasa rumah yang membuat Anda ingin kembali lagi.
             </p>
             <div className="about-stats" style={{ display: 'flex', gap: '24px', marginTop: '12px' }}>
               <div>
                 <h3 style={{ fontSize: '32px', color: 'var(--secondary)' }}>100%</h3>
-                <p style={{ fontSize: '14px', fontWeight: 600 }}>Arabika Lokal</p>
+                <p style={{ fontSize: '14px', fontWeight: 600 }}>Rempah Asli</p>
               </div>
               <div>
                 <h3 style={{ fontSize: '32px', color: 'var(--secondary)' }}>Fresh</h3>
-                <p style={{ fontSize: '14px', fontWeight: 600 }}>Roasted Weekly</p>
+                <p style={{ fontSize: '14px', fontWeight: 600 }}>Setiap Hari</p>
               </div>
               <div>
-                <h3 style={{ fontSize: '32px', color: 'var(--secondary)' }}>Sourced</h3>
-                <p style={{ fontSize: '14px', fontWeight: 600 }}>Ethically</p>
+                <h3 style={{ fontSize: '32px', color: 'var(--secondary)' }}>Lokal</h3>
+                <p style={{ fontSize: '14px', fontWeight: 600 }}>Bahan Segar</p>
               </div>
             </div>
           </div>
@@ -496,19 +536,26 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
         <div className="container">
           <div className="footer-grid">
             <div className="footer-about">
-              <h3>Kopiku</h3>
-              <p>Sajian kopi premium hangat yang menghubungkan rasa, cerita, dan kebersamaan di setiap cangkirnya.</p>
+              <h3>Resto Rasa Nusantara</h3>
+              <p>Sajian otentik warisan nusantara yang menghubungkan rasa, cerita, dan kebersamaan di setiap suapannya.</p>
               <div className="social-links">
-                <a href="#" className="social-link">🌐</a>
-                <a href="#" className="social-link">📸</a>
-                <a href="#" className="social-link">💬</a>
+                {/* TODO: Ganti href "#" dengan link sosial media asli bisnis Anda */}
+                <a href="#" className="social-link" aria-label="Website">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                </a>
+                <a href="#" className="social-link" aria-label="Instagram">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                </a>
+                <a href="#" className="social-link" aria-label="WhatsApp">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </a>
               </div>
             </div>
             <div className="footer-links">
               <h4>Navigasi</h4>
               <ul>
                 <li><a href="#">Beranda</a></li>
-                <li><a href="#menu-pilihan">Menu Kopi</a></li>
+                <li><a href="#menu-pilihan">Menu Spesial</a></li>
                 <li><a href="#tentang">Tentang Kami</a></li>
                 {isAdminVisible && <li><Link href="/admin">Admin Portal</Link></li>}
               </ul>
@@ -516,15 +563,16 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
             <div className="footer-links">
               <h4>Kontak</h4>
               <ul>
-                <li style={{ color: 'var(--accent)', opacity: 0.8 }}>📍 Jl. Kopi Raya No. 42, Jakarta</li>
+                {/* TODO: Ganti data kontak di bawah dengan data asli bisnis Anda */}
+                <li style={{ color: 'var(--accent)', opacity: 0.8 }}>📍 Jl. Kuliner Raya No. 42, Jakarta</li>
                 <li style={{ color: 'var(--accent)', opacity: 0.8 }}>📞 +62 812-3456-789</li>
-                <li style={{ color: 'var(--accent)', opacity: 0.8 }}>✉️ info@kopikita.com</li>
+                <li style={{ color: 'var(--accent)', opacity: 0.8 }}>✉️ info@restorasa.com</li>
               </ul>
             </div>
           </div>
           <div className="footer-bottom">
-            <p>&copy; 2026 Kopiku Startup. All rights reserved.</p>
-            <p>Dibuat dengan rasa cinta terhadap kopi ☕</p>
+            <p>&copy; 2026 Resto Rasa Nusantara. All rights reserved.</p>
+            <p>Dibuat dengan rasa cinta terhadap kuliner nusantara 🍽️</p>
           </div>
         </div>
       </footer>
@@ -534,15 +582,15 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
         <div className="modal-overlay active">
           <div className="modal-container">
             <button className="close-modal" onClick={() => setCustomizingItem(null)}>✕</button>
-            <div className="modal-hero" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'var(--accent)', overflow: 'hidden' }}>
-              {customizingItem.image && !customizingItem.image.includes('placeholder') && !customizingItem.image.includes('espresso.jpg') ? (
-                <img src={customizingItem.image} alt={customizingItem.name} className="menu-image" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-              ) : (
-                <span className="modal-hero-placeholder" style={{ transform: 'none' }}>
-                  {customizingItem.categorySlug === 'espresso-base' || customizingItem.categorySlug === 'milk-base' ? '☕' : 
-                   customizingItem.categorySlug === 'non-coffee' ? '🍵' : '🥐'}
-                </span>
-              )}
+            <div className="modal-header-image" style={{ height: '200px', backgroundColor: 'var(--border-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px', borderTopLeftRadius: 'var(--radius-xl)', borderTopRightRadius: 'var(--radius-xl)', overflow: 'hidden' }}>
+              {customizingItem.image && !customizingItem.image.includes('placeholder') && !customizingItem.image.includes('nasi_goreng.png') ? (
+                  <img src={customizingItem.image} alt={customizingItem.name} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                ) : (
+                  <span>
+                  {customizingItem.categorySlug === 'makanan-utama' || customizingItem.categorySlug === 'sayuran-lauk' ? '🍲' : 
+                   customizingItem.categorySlug === 'minuman' ? '🍹' : '🍘'}
+                  </span>
+                )}
             </div>
             <div className="modal-content">
               <div className="modal-title-desc">
@@ -551,72 +599,81 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
               </div>
 
               {/* Show drink options only for beverages (not pastries) */}
-              {customizingItem.categorySlug !== 'pastry' && (
-                <>
+              <>
                   {/* Size Customization */}
                   <div className="customization-section">
                     <div className="customization-title">
-                      Ukuran Gelas <span>Wajib</span>
+                      Porsi <span>Opsional</span>
                     </div>
-                    <div className="option-grid">
+                    <div className="option-grid option-grid-2">
                       <label>
                         <input 
                           type="radio" 
                           name="size" 
                           className="option-radio"
-                          checked={selectedSize === 'Regular'}
-                          onChange={() => setSelectedSize('Regular')}
+                          checked={selectedSize === 'Reguler'}
+                          onChange={() => setSelectedSize('Reguler')}
                         />
-                        <div className="option-card">Regular <span>+Rp 0</span></div>
+                        <div className="option-card">Reguler <span>+Rp 0</span></div>
                       </label>
                       <label>
                         <input 
                           type="radio" 
                           name="size" 
                           className="option-radio"
-                          checked={selectedSize === 'Large'}
-                          onChange={() => setSelectedSize('Large')}
+                          checked={selectedSize === 'Jumbo'}
+                          onChange={() => setSelectedSize('Jumbo')}
                         />
-                        <div className="option-card">Large <span>+Rp 5.000</span></div>
+                        <div className="option-card">Jumbo <span>+Rp 10.000</span></div>
                       </label>
                     </div>
                   </div>
 
-                  {/* Sugar Customization */}
+                  {/* Spice Customization */}
                   <div className="customization-section">
                     <div className="customization-title">
-                      Tingkat Kemanisan <span>Opsional</span>
+                      Tingkat Pedas <span>Opsional</span>
                     </div>
-                    <div className="option-grid">
+                    <div className="option-grid option-grid-4">
                       <label>
                         <input 
                           type="radio" 
                           name="sugar" 
                           className="option-radio"
-                          checked={selectedSugar === 'Normal'}
-                          onChange={() => setSelectedSugar('Normal')}
+                          checked={selectedSugar === 'Tidak Pedas'}
+                          onChange={() => setSelectedSugar('Tidak Pedas')}
                         />
-                        <div className="option-card">Normal</div>
+                        <div className="option-card">Tidak Pedas</div>
                       </label>
                       <label>
                         <input 
                           type="radio" 
                           name="sugar" 
                           className="option-radio"
-                          checked={selectedSugar === 'Less'}
-                          onChange={() => setSelectedSugar('Less')}
+                          checked={selectedSugar === 'Sedang'}
+                          onChange={() => setSelectedSugar('Sedang')}
                         />
-                        <div className="option-card">Less Sugar</div>
+                        <div className="option-card">Sedang</div>
                       </label>
                       <label>
                         <input 
                           type="radio" 
                           name="sugar" 
                           className="option-radio"
-                          checked={selectedSugar === 'No Sugar'}
-                          onChange={() => setSelectedSugar('No Sugar')}
+                          checked={selectedSugar === 'Pedas'}
+                          onChange={() => setSelectedSugar('Pedas')}
                         />
-                        <div className="option-card">No Sugar</div>
+                        <div className="option-card">Pedas</div>
+                      </label>
+                      <label>
+                        <input 
+                          type="radio" 
+                          name="sugar" 
+                          className="option-radio"
+                          checked={selectedSugar === 'Ekstra Pedas'}
+                          onChange={() => setSelectedSugar('Ekstra Pedas')}
+                        />
+                        <div className="option-card">Ekstra Pedas</div>
                       </label>
                     </div>
                   </div>
@@ -624,7 +681,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                   {/* Ice Customization */}
                   <div className="customization-section">
                     <div className="customization-title">
-                      Es <span>Opsional</span>
+                      Suhu (Khusus Minuman) <span>Opsional</span>
                     </div>
                     <div className="option-grid">
                       <label>
@@ -635,34 +692,82 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                           checked={selectedIce === 'Normal'}
                           onChange={() => setSelectedIce('Normal')}
                         />
-                        <div className="option-card">Normal Ice</div>
+                        <div className="option-card">Normal</div>
                       </label>
                       <label>
                         <input 
                           type="radio" 
                           name="ice" 
                           className="option-radio"
-                          checked={selectedIce === 'Less'}
-                          onChange={() => setSelectedIce('Less')}
+                          checked={selectedIce === 'Dingin (Es)'}
+                          onChange={() => setSelectedIce('Dingin (Es)')}
                         />
-                        <div className="option-card">Less Ice</div>
+                        <div className="option-card">Dingin (Es)</div>
                       </label>
                       <label>
                         <input 
                           type="radio" 
                           name="ice" 
                           className="option-radio"
-                          checked={selectedIce === 'No Ice'}
-                          onChange={() => setSelectedIce('No Ice')}
+                          checked={selectedIce === 'Panas / Hangat'}
+                          onChange={() => setSelectedIce('Panas / Hangat')}
                         />
-                        <div className="option-card">No Ice</div>
+                        <div className="option-card">Panas / Hangat</div>
                       </label>
                     </div>
                   </div>
 
+                  {/* Add-on Tambahan */}
+                  <div className="customization-section">
+                    <div className="customization-title">
+                      Lauk Tambahan <span>Opsional</span>
+                    </div>
+                    <div className="option-grid option-grid-4">
+                      <label>
+                        <input 
+                          type="radio" 
+                          name="addon" 
+                          className="option-radio"
+                          checked={selectedAddon === 'None'}
+                          onChange={() => setSelectedAddon('None')}
+                        />
+                        <div className="option-card">Tanpa Tambahan <span>+Rp 0</span></div>
+                      </label>
+                      <label>
+                        <input 
+                          type="radio" 
+                          name="addon" 
+                          className="option-radio"
+                          checked={selectedAddon === 'Telur Mata Sapi'}
+                          onChange={() => setSelectedAddon('Telur Mata Sapi')}
+                        />
+                        <div className="option-card">Telur Mata Sapi <span>+Rp 5.000</span></div>
+                      </label>
+                      <label>
+                        <input 
+                          type="radio" 
+                          name="addon" 
+                          className="option-radio"
+                          checked={selectedAddon === 'Nasi Putih'}
+                          onChange={() => setSelectedAddon('Nasi Putih')}
+                        />
+                        <div className="option-card">Nasi Putih <span>+Rp 6.000</span></div>
+                      </label>
+                      <label>
+                        <input 
+                          type="radio" 
+                          name="addon" 
+                          className="option-radio"
+                          checked={selectedAddon === 'Kerupuk'}
+                          onChange={() => setSelectedAddon('Kerupuk')}
+                        />
+                        <div className="option-card">Kerupuk <span>+Rp 2.000</span></div>
+                      </label>
+                    </div>
+                  </div>
 
                 </>
-              )}
+              
 
               {/* Quantity */}
               <div className="customization-section">
@@ -704,7 +809,7 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
             cart.map((item) => (
               <div key={item.key} className="cart-item">
                 <div className="cart-item-image">
-                  {item.image.includes('croissant') || item.image.includes('cake') ? '🥐' : '☕'}
+                  {item.categorySlug === 'makanan-utama' || item.categorySlug === 'sayuran-lauk' ? '🍲' : item.categorySlug === 'minuman' ? '🍹' : '🍘'}
                 </div>
                 <div className="cart-item-details">
                   <h4 className="cart-item-name">{item.name}</h4>
@@ -843,37 +948,39 @@ export default function MenuClient({ initialCategories, initialMenuItems, dbErro
                       <div style={{ width: '45px', height: '45px', border: '8px solid #111', boxSizing: 'border-box', position: 'absolute', bottom: '10px', left: '10px' }} />
                       <div style={{ width: '100%', height: '100%', border: '2px dashed #999', pointerEvents: 'none' }} />
                     </div>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#111' }}>KOPIKU - KASIR</span>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
+                      <div style={{ width: '48px', height: '48px', backgroundColor: 'var(--primary)', color: 'white', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', marginBottom: '16px' }}>
+                        🍽️
+                      </div>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: '#111' }}>RESTO RASA - KASIR</span>
+                      <span style={{ fontSize: '12px', color: '#666' }}>ID Tagihan: #{Math.floor(Math.random() * 100000)}</span>
+                    </div>
                     <p style={{ fontSize: '11px', color: 'var(--text-muted)', textAlign: 'center', margin: '0' }}>
                       Scan QR di atas menggunakan aplikasi dompet digital Anda (Gopay, OVO, Dana, LinkAja, BCA Mobile, dll).
                     </p>
                   </div>
                 ) : (
+                  /* TODO: Ganti informasi rekening bank di bawah dengan data asli bisnis Anda */
                   <div style={{ width: '100%', border: '1px solid var(--border-color)', padding: '16px', borderRadius: '12px', backgroundColor: 'rgba(78, 54, 41, 0.02)' }}>
-                    <div style={{ marginBottom: '12px' }}>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Bank Tujuan</div>
-                      <div style={{ fontSize: '16px', fontWeight: 'bold', color: 'var(--primary-dark)' }}>BANK CENTRAL ASIA (BCA)</div>
-                    </div>
                     <div style={{ marginBottom: '12px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                      <div>
-                        <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Nomor Rekening</div>
-                        <div style={{ fontSize: '18px', fontWeight: 'bold', fontFamily: 'monospace', color: '#111' }}>8012 3456 789</div>
-                      </div>
                       <button 
                         type="button"
                         className="btn btn-secondary" 
                         style={{ padding: '6px 12px', fontSize: '12px' }}
                         onClick={() => {
-                          navigator.clipboard.writeText("80123456789");
+                          navigator.clipboard.writeText("1234567890");
                           triggerToast("Nomor rekening disalin!");
                         }}
                       >
                         📋 Salin
                       </button>
                     </div>
-                    <div>
-                      <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>Nama Penerima</div>
-                      <div style={{ fontSize: '16px', fontWeight: 'bold' }}>KOPIKU PT</div>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                      <div style={{ width: '40px', height: '40px', backgroundColor: '#f0f0f0', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>🏦</div>
+                      <div>
+                        <div style={{ fontSize: '16px', fontWeight: 'bold' }}>RESTO RASA PT</div>
+                        <div style={{ fontSize: '14px', color: '#666', fontFamily: 'monospace' }}>BCA - 1234567890</div>
+                      </div>
                     </div>
                   </div>
                 )}

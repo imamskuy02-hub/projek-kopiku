@@ -1,11 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "@/lib/db";
-import crypto from "crypto";
+import bcrypt from "bcryptjs";
 import { signToken } from "@/lib/auth";
-
-function hashPassword(password) {
-  return crypto.createHash("sha256").update(password).digest("hex");
-}
 
 export async function POST(request) {
   try {
@@ -19,7 +15,7 @@ export async function POST(request) {
       where: { username }
     });
 
-    if (!admin || admin.password !== hashPassword(password)) {
+    if (!admin || !(await bcrypt.compare(password, admin.password))) {
       return NextResponse.json({ error: "Username atau password salah" }, { status: 401 });
     }
 

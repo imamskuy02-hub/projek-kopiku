@@ -1,8 +1,8 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "kopiku - Premium Coffee Shop Menu",
-  description: "Menu digital interaktif untuk menikmati sajian kopi premium kami.",
+  title: "Resto Rasa Nusantara - Sajian Spesial Resep Warisan",
+  description: "Menu digital interaktif untuk menikmati hidangan lezat dan otentik dari dapur kami.",
   manifest: "/manifest.json",
 };
 

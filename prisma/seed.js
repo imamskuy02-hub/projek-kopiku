@@ -1,10 +1,10 @@
 const { PrismaClient } = require('@prisma/client');
-const crypto = require('crypto');
+const bcrypt = require('bcryptjs');
 
 const prisma = new PrismaClient();
 
-function hashPassword(password) {
-  return crypto.createHash('sha256').update(password).digest('hex');
+async function hashPassword(password) {
+  return bcrypt.hash(password, 10);
 }
 
 async function main() {
@@ -16,29 +16,32 @@ async function main() {
   await prisma.admin.deleteMany();
 
   // Create Admin
+  // ⚠️ PENTING: Ganti password di bawah setelah pertama kali deploy!
+  // Jalankan ulang `npm run db:seed` setelah mengubah password.
+  const adminPassword = 'admin123';
   const admin = await prisma.admin.create({
     data: {
       username: 'admin',
-      password: hashPassword('admin123'),
+      password: await hashPassword(adminPassword),
     },
   });
-  console.log('Created Admin user: admin / admin123');
+  console.log(`Created Admin user: admin / ${adminPassword} (SEGERA GANTI SETELAH DEPLOY!)`);
 
   // Create Categories
-  const espressoCat = await prisma.category.create({
-    data: { name: 'Espresso Base', slug: 'espresso-base' },
+  const makananUtamaCat = await prisma.category.create({
+    data: { name: 'Makanan Utama', slug: 'makanan-utama' },
   });
 
-  const milkCat = await prisma.category.create({
-    data: { name: 'Milk Base', slug: 'milk-base' },
+  const sayuranLaukCat = await prisma.category.create({
+    data: { name: 'Sayuran & Lauk', slug: 'sayuran-lauk' },
   });
 
-  const nonCoffeeCat = await prisma.category.create({
-    data: { name: 'Non-Coffee', slug: 'non-coffee' },
+  const minumanCat = await prisma.category.create({
+    data: { name: 'Minuman', slug: 'minuman' },
   });
 
-  const pastryCat = await prisma.category.create({
-    data: { name: 'Pastry', slug: 'pastry' },
+  const camilanCat = await prisma.category.create({
+    data: { name: 'Camilan', slug: 'camilan' },
   });
 
   console.log('Created categories.');
@@ -46,67 +49,74 @@ async function main() {
   // Create Menu Items
   const items = [
     {
-      name: 'Espresso',
-      description: 'Single shot espresso murni menggunakan biji kopi arabika pilihan dengan aroma yang kuat dan crema tebal.',
-      price: 18000,
-      image: '/images/espresso.jpg',
-      categoryId: espressoCat.id,
-    },
-    {
-      name: 'Americano',
-      description: 'Double shot espresso yang diencerkan dengan air panas, menyajikan rasa kopi yang bersih, kuat, dan menyegarkan.',
-      price: 22000,
-      image: '/images/americano.jpg',
-      categoryId: espressoCat.id,
-    },
-    {
-      name: 'Café Latte',
-      description: 'Espresso kaya rasa yang dipadukan dengan steamed milk lembut dan lapisan foam tipis di atasnya.',
-      price: 28000,
-      image: '/images/latte.jpg',
-      categoryId: milkCat.id,
-    },
-    {
-      name: 'Cappuccino',
-      description: 'Minuman kopi klasik dengan perbandingan seimbang antara espresso, steamed milk, dan milk foam tebal.',
-      price: 28000,
-      image: '/images/cappuccino.jpg',
-      categoryId: milkCat.id,
-    },
-    {
-      name: 'Caramel Macchiato',
-      description: 'Perpaduan espresso, sirup vanilla premium, susu segar, dan siraman saus karamel manis di atasnya.',
-      price: 32000,
-      image: '/images/caramel-macchiato.jpg',
-      categoryId: milkCat.id,
-    },
-    {
-      name: 'Matcha Latte',
-      description: 'Bubuk matcha Jepang berkualitas tinggi yang diseduh dan diaduk dengan susu segar hangat.',
-      price: 30000,
-      image: '/images/matcha-latte.jpg',
-      categoryId: nonCoffeeCat.id,
-    },
-    {
-      name: 'Signature Chocolate',
-      description: 'Cokelat hitam premium pekat yang dipadukan secara sempurna dengan susu segar yang creamy.',
-      price: 30000,
-      image: '/images/chocolate.jpg',
-      categoryId: nonCoffeeCat.id,
-    },
-    {
-      name: 'Butter Croissant',
-      description: 'Croissant panggang klasik Perancis yang renyah di luar, lembut di dalam, dan sangat terasa menteganya.',
-      price: 20000,
-      image: '/images/croissant.jpg',
-      categoryId: pastryCat.id,
-    },
-    {
-      name: 'Chocolate Fudge Cake',
-      description: 'Satu potong kue cokelat lembut berlapis fudge cokelat pekat yang manis dan memanjakan lidah.',
+      name: 'Nasi Goreng Spesial',
+      description: 'Nasi goreng dengan bumbu rempah rahasia, disajikan dengan suwiran ayam, bakso, dan taburan bawang goreng.',
       price: 25000,
-      image: '/images/fudge-cake.jpg',
-      categoryId: pastryCat.id,
+      image: '/images/nasi_goreng.png',
+      categoryId: makananUtamaCat.id,
+    },
+    {
+      name: 'Ayam Bakar Taliwang',
+      description: 'Ayam bakar khas Lombok dengan bumbu pedas manis meresap, disajikan dengan sambal terasi.',
+      price: 35000,
+      image: '/images/ayam_bakar.png',
+      categoryId: makananUtamaCat.id,
+    },
+    {
+      name: 'Sate Ayam Madura',
+      description: '10 tusuk sate ayam empuk dengan baluran bumbu kacang kental dan kecap manis.',
+      price: 30000,
+      image: '/images/sate_ayam.png',
+      categoryId: makananUtamaCat.id,
+    },
+    {
+      name: 'Tumis Kangkung Terasi',
+      description: 'Kangkung segar ditumis dengan bumbu terasi pilihan dan irisan cabai merah.',
+      price: 15000,
+      image: '/images/tumis_kangkung.png',
+      categoryId: sayuranLaukCat.id,
+    },
+    {
+      name: 'Tahu Tempe Penyet',
+      description: 'Tahu dan tempe goreng renyah disajikan dengan sambal bawang pedas nendang.',
+      price: 12000,
+      image: '/images/tahu_tempe.png',
+      categoryId: sayuranLaukCat.id,
+    },
+    {
+      name: 'Es Teh Manis',
+      description: 'Teh melati seduh asli dengan gula batu murni.',
+      price: 5000,
+      image: '/images/es_teh.png',
+      categoryId: minumanCat.id,
+    },
+    {
+      name: 'Es Jeruk Peras',
+      description: 'Perasan jeruk asli yang menyegarkan dahaga.',
+      price: 10000,
+      image: '/images/es_jeruk.png',
+      categoryId: minumanCat.id,
+    },
+    {
+      name: 'Jus Alpukat',
+      description: 'Jus alpukat mentega segar dengan siraman kental manis cokelat.',
+      price: 15000,
+      image: '/images/jus_alpukat.png',
+      categoryId: minumanCat.id,
+    },
+    {
+      name: 'Mendoan Panas',
+      description: 'Tempe mendoan digoreng setengah matang dengan adonan tepung berbumbu, disajikan dengan sambal kecap.',
+      price: 10000,
+      image: '/images/mendoan.png',
+      categoryId: camilanCat.id,
+    },
+    {
+      name: 'Pisang Goreng Keju',
+      description: 'Pisang tanduk goreng renyah dengan taburan keju parut melimpah dan susu kental manis.',
+      price: 12000,
+      image: '/images/pisang_goreng.png',
+      categoryId: camilanCat.id,
     },
   ];
 

@@ -1,12 +1,12 @@
 {
   "background_color": "#897057",
-  "description": "Menu digital interaktif untuk menikmati sajian kopi premium kami.",
+  "description": "Menu digital untuk menikmati hidangan lezat dan otentik dari dapur kami.",
   "dir": "ltr",
   "display": "standalone",
-  "name": "Kopiku admin",
+  "name": "Resto Rasa Nusantara Admin",
   "orientation": "any",
   "scope": "/",
-  "short_name": "Kopiku",
+  "short_name": "RestoRasa",
   "start_url": "/login?app=true",
   "theme_color": "#ffffff",
   "icons": [

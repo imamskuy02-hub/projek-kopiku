@@ -1,7 +1,10 @@
 import crypto from "crypto";
 
-// Secret key for signing. Fallback to a random string if not defined in .env
-const JWT_SECRET = process.env.JWT_SECRET || "kopi-kita-super-secret-key-signature-2026-coffee";
+// Secret key for signing. MUST be defined in .env — do not hardcode in production!
+const JWT_SECRET = process.env.JWT_SECRET;
+if (!JWT_SECRET) {
+  console.error("⚠️ PERINGATAN: JWT_SECRET belum di-set di file .env! Autentikasi tidak akan berfungsi dengan aman.");
+}
 
 /**
  * Signs a payload to generate a secure JWT-like token.
