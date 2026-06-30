@@ -19,8 +19,8 @@ export function middleware(request) {
       const response = NextResponse.next();
       response.cookies.set("is_admin_app", "true", {
         path: "/",
-        httpOnly: true,
-        secure: true,
+        httpOnly: false,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
       });
       return response;
