@@ -9,7 +9,7 @@ export function middleware(request) {
     const hasCookie = request.cookies.has("is_admin_app");
     const hasParam = url.searchParams.get("app") === "true";
     const userAgent = request.headers.get("user-agent") || "";
-    const isAppUA = userAgent.includes("KopikuAdminApp");
+    const isAppUA = userAgent.includes("KopikuAdminApp") || userAgent.includes("RestoRasaAdminApp");
 
     // If neither the cookie, URL parameter, nor custom app User-Agent is present, return 404
     if (!hasCookie && !hasParam && !isAppUA) {

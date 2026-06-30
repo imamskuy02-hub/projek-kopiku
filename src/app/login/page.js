@@ -51,10 +51,10 @@ export default function LoginPage() {
     <div className="login-page">
       <div className="login-card">
         <Link href="/" className="logo" style={{ justifyContent: 'center', marginBottom: '24px' }}>
-          <span style={{ fontSize: '36px' }}>☕</span> Kopiku
+          <span style={{ fontSize: '36px' }}>🍽️</span> Resto Rasa
         </Link>
         <h2 className="login-title">Admin Portal</h2>
-        <p className="login-subtitle">Masuk untuk mengelola menu kopi Anda</p>
+        <p className="login-subtitle">Masuk untuk mengelola menu Anda</p>
 
         {error && <div className="error-message">{error}</div>}
 

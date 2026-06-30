@@ -206,6 +206,8 @@ export default function AdminDashboard() {
       try {
         const res = await fetch("/api/auth/me");
         if (!res.ok) {
+          sessionStorage.removeItem("isLoggedIn");
+          sessionStorage.removeItem("adminUser");
           router.push("/login");
         } else {
           setAuthorized(true);
@@ -404,7 +406,7 @@ export default function AdminDashboard() {
       {/* Sidebar */}
       <aside className="admin-sidebar">
         <div className="admin-logo">
-          <span>☕</span> Admin Kopiku
+          <span>🍽️</span> Admin Resto Rasa
         </div>
         <ul className="admin-nav">
           <li className={`admin-nav-item ${activeTab === "reports" ? "active" : ""}`}>
@@ -454,13 +456,13 @@ export default function AdminDashboard() {
           {activeTab === "reports" ? (
             <div className="admin-title-desc">
               <h1>Laporan Analisis Penjualan</h1>
-              <p>Analisis tren transaksi, omzet pendapatan, dan daftar menu kopi terlaris Anda.</p>
+              <p>Analisis tren transaksi, omzet pendapatan, dan daftar menu terlaris Anda.</p>
             </div>
           ) : activeTab === "menu" ? (
             <>
               <div className="admin-title-desc">
                 <h1>Kelola Daftar Menu</h1>
-                <p>Tambah, edit, hapus, dan atur ketersediaan menu kopi atau pastry Anda.</p>
+                <p>Tambah, edit, hapus, dan atur ketersediaan menu Anda.</p>
               </div>
               <button className="btn btn-primary" onClick={handleOpenAddModal}>
                 ➕ Tambah Menu Baru
@@ -469,7 +471,7 @@ export default function AdminDashboard() {
           ) : (
             <div className="admin-title-desc">
               <h1>Kelola Pesanan Masuk</h1>
-              <p>Pantau dan update status pembayaran serta penyajian kopi pelanggan Anda.</p>
+              <p>Pantau dan update status pembayaran serta penyajian hidangan pelanggan Anda.</p>
             </div>
           )}
         </header>
@@ -633,7 +635,7 @@ export default function AdminDashboard() {
             {/* Table Card */}
             <div className="admin-card">
               <div className="admin-card-header">
-                <h2>Semua Menu Kopi & Makanan</h2>
+                <h2>Semua Menu Makanan & Minuman</h2>
               </div>
               <div className="table-wrapper">
                 <table className="admin-table">
@@ -929,7 +931,7 @@ export default function AdminDashboard() {
             <button className="close-modal" onClick={() => setIsModalOpen(false)}>✕</button>
             <div className="modal-content" style={{ padding: '32px' }}>
               <h2 style={{ marginBottom: '24px', color: 'var(--primary-dark)' }}>
-                {editingItem ? "Ubah Detail Menu" : "Tambah Menu Kopi Baru"}
+                {editingItem ? "Ubah Detail Menu" : "Tambah Menu Baru"}
               </h2>
 
               {errorMsg && <div className="error-message">{errorMsg}</div>}
@@ -1030,7 +1032,7 @@ export default function AdminDashboard() {
                   <label className="form-label">Deskripsi Menu</label>
                   <textarea
                     className="form-textarea"
-                    placeholder="Tuliskan deskripsi cita rasa kopi, bahan, dsb..."
+                    placeholder="Tuliskan deskripsi hidangan, bumbu, bahan, dsb..."
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
                   />
