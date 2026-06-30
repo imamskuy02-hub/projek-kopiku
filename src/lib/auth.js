@@ -1,9 +1,9 @@
 import crypto from "crypto";
 
 // Secret key for signing. MUST be defined in .env — do not hardcode in production!
-const JWT_SECRET = process.env.JWT_SECRET;
-if (!JWT_SECRET) {
-  console.error("⚠️ PERINGATAN: JWT_SECRET belum di-set di file .env! Autentikasi tidak akan berfungsi dengan aman.");
+const JWT_SECRET = process.env.JWT_SECRET || "fallback_secret_for_vercel_kopiku_restorasa";
+if (!process.env.JWT_SECRET) {
+  console.error("⚠️ PERINGATAN: JWT_SECRET belum di-set di file .env! Menggunakan fallback rahasia.");
 }
 
 /**
